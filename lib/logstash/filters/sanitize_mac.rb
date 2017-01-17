@@ -73,7 +73,7 @@ class LogStash::Filters::SanitizeMac < LogStash::Filters::Base
     return unless filter?(event)
 
     @match.keys.each do |field|
-      next if event[field].nil?
+      next if event.get(field).nil?
 
       # Work out what format the incoming MAC address is in. As well as
       # well-formed addresses, this has to cope with things like missing
@@ -81,23 +81,23 @@ class LogStash::Filters::SanitizeMac < LogStash::Filters::Base
       # does not parse.
 
       # looks colon-delimited?
-      if event[field] =~ /^(?:[0-9a-f]{1,2}:){5}[0-9a-f]{1,2}$/i
-        octets = event[field].split(":")
+      if event.get(field) =~ /^(?:[0-9a-f]{1,2}:){5}[0-9a-f]{1,2}$/i
+        octets = event.get(field).split(":")
         mac = octets.map { |o| (o.length == 1 ? "0" + o : o) }.join
 
       # looks hyphen-delimited?
-      elsif event[field] =~ /^(?:[0-9a-f]{1,2}-){5}[0-9a-f]{1,2}$/i
-        octets = event[field].split("-")
+      elsif event.get(field) =~ /^(?:[0-9a-f]{1,2}-){5}[0-9a-f]{1,2}$/i
+        octets = event.get(field).split("-")
         mac = octets.map { |o| (o.length == 1 ? "0" + o : o) }.join
 
       # looks cisco dot-delimited?
-      elsif event[field] =~ /^[0-9a-f]{1,4}\.[0-9a-f]{1,4}\.[0-9a-f]{1,4}$/i
-        words = event[field].split(".")
+      elsif event.get(field) =~ /^[0-9a-f]{1,4}\.[0-9a-f]{1,4}\.[0-9a-f]{1,4}$/i
+        words = event.get(field).split(".")
         mac = words.map { |o| (o.length < 4 ? ("000" + o)[-4..-1] : o) }.join
 
       # last try; could just be 12-digit hex?
-      elsif event[field] =~ /^[0-9a-f]{12}$/i
-        mac = event[field]
+      elsif event.get(field) =~ /^[0-9a-f]{12}$/i
+        mac = event.get(field)
 
       # give up, it doesn't look like a MAC address
       else
@@ -117,9 +117,9 @@ class LogStash::Filters::SanitizeMac < LogStash::Filters::Base
       # push the updated value back
       new_field = @match[field]
       case @fixcase
-        when "lower" then event[new_field] = octets.join(separator).downcase
-        when "upper" then event[new_field] = octets.join(separator).upcase
-        else event[new_field] = octets.join(separator)
+        when "lower" then event.set(new_field, octets.join(separator).downcase)
+        when "upper" then event.set(new_field, octets.join(separator).upcase)
+        else event.set(new_field, octets.join(separator))
       end
 
     end
