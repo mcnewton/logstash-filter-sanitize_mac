@@ -37,7 +37,6 @@ require "logstash/namespace"
 
 class LogStash::Filters::SanitizeMac < LogStash::Filters::Base
   config_name "sanitize_mac"
-  milestone 1
 
   # Hash of fields to process; key is input field, value is output field.
   # Input and output field may be the same, in which case the value of the field
