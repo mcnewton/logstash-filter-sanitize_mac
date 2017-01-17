@@ -7,7 +7,6 @@ describe LogStash::Filters::SanitizeMac do
     let(:config) do <<-CONFIG
       filter {
         sanitize_mac {
-          message => "Hello World"
           match => { "client_mac" => "client_mac_sanitized" }
           separator => "-"
           fixcase => "lower"
