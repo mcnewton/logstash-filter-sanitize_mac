@@ -41,11 +41,11 @@ class LogStash::Filters::SanitizeMac < LogStash::Filters::Base
   # Hash of fields to process; key is input field, value is output field.
   # Input and output field may be the same, in which case the value of the field
   # is replaced assuming the data looks like a MAC address and can be sanitized.
-  config :match, :validate => :hash, :default => {}
+  config :match, :validate => :hash, :required => true
 
   # MAC address separator for rewritten address; can be any of
   #  ":", "-", "." or "".
-  config :separator, :validate => :string, :default => ":"
+  config :separator, :validate => :string, :default => "-"
 
   # Fix case of MAC address. "lower", "upper" or "" to just leave it alone.
   config :fixcase, :validate => :string, :default => ""
